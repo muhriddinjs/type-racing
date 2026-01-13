@@ -6,9 +6,8 @@ import { PlayerLobby } from "./pages/PlayerLobby";
 import { RaceScreen } from "./pages/RaceScreen";
 import { ResultsScreen } from "./pages/ResultsScreen";
 
-// High-level app state machine for simple page routing
 export function App() {
-  const [view, setView] = useState("home"); // home | hostLobby | playerLobby | race | results
+  const [view, setView] = useState("home");
   const [pin, setPin] = useState("");
   const [hostId, setHostId] = useState("");
   const [player, setPlayer] = useState(null);
@@ -18,7 +17,6 @@ export function App() {
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
-    // Listen for server broadcasts that affect multiple views
     socket.on("player_joined", ({ players: updatedPlayers }) => {
       setPlayers(updatedPlayers);
     });
@@ -43,7 +41,6 @@ export function App() {
     });
 
     socket.on("race_closed", () => {
-      // If host disconnects or race closed, bring everyone back home
       alert("Race was closed by host.");
       resetState();
     });
@@ -67,6 +64,8 @@ export function App() {
     setRaceText("");
     setStartTime(null);
     setLeaderboard([]);
+    // Optionally emit a leave event to server if we want to be explicit
+    socket.emit("leave_race");
   };
 
   const handleCreateRace = () => {
@@ -114,7 +113,7 @@ export function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Typing Race</h1>
+        <h1>Type Racing</h1>
       </header>
       <main className="app-main">
         {view === "home" && (
@@ -136,6 +135,7 @@ export function App() {
             players={players}
             hostId={hostId}
             currentPlayerId={player?.id}
+            onBackHome={resetState}
           />
         )}
         {view === "race" && (
@@ -157,5 +157,3 @@ export function App() {
     </div>
   );
 }
-
-

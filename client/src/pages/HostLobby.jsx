@@ -10,24 +10,28 @@ export function HostLobby({
 }) {
   return (
     <div className="card">
-      <h2>Host Lobby</h2>
-      <p className="pin-display">
-        Share this PIN with players:
+      <h2>Race Lobby</h2>
+      <div className="pin-display">
+        <p>Share this PIN with players</p>
         <span className="pin">{pin}</span>
-      </p>
-      <h3>Players joined</h3>
+      </div>
+      
+      <h3>Players Joined</h3>
       <ul className="players-list">
-        {players.length === 0 && <li>No players yet...</li>}
+        {players.length === 0 && <li>Waiting for players...</li>}
         {players.map((p) => (
           <li key={p.id}>
-            {p.name} {p.id === hostId ? "(Host)" : ""}
+            {p.name} {p.id === hostId ? "👑" : ""}
           </li>
         ))}
       </ul>
+      
       <div className="actions-row">
-        <button onClick={onBackHome}>Back to Home</button>
+        <button className="secondary" onClick={onBackHome}>
+          Leave Race
+        </button>
         {isHost && (
-          <button className="primary" onClick={onStartRace}>
+          <button className="primary" onClick={onStartRace} disabled={players.length === 0}>
             Start Race
           </button>
         )}
@@ -35,5 +39,3 @@ export function HostLobby({
     </div>
   );
 }
-
-

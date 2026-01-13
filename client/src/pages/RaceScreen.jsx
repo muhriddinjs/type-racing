@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-// Utility to compute WPM and accuracy
 function computeStats({ correctChars, totalTyped, startTime }) {
   const now = Date.now();
   const elapsedMs = Math.max(1, now - startTime);
@@ -28,7 +27,6 @@ export function RaceScreen({
   const chars = useMemo(() => text.split(""), [text]);
 
   useEffect(() => {
-    // Simple 3,2,1,Go countdown handled client-side
     let intervalId;
     if (startTime) {
       setCountdown(3);
@@ -52,7 +50,6 @@ export function RaceScreen({
     const value = e.target.value;
     setInputValue(value);
 
-    // Compute correctness
     let correctChars = 0;
     for (let i = 0; i < value.length && i < chars.length; i += 1) {
       if (value[i] === chars[i]) correctChars += 1;
@@ -67,7 +64,6 @@ export function RaceScreen({
 
     onProgress({ progress, wpm, accuracy });
 
-    // If reached end of text, finish
     if (correctChars === chars.length && !finished) {
       setFinished(true);
       onFinish({ wpm, accuracy });
@@ -75,22 +71,17 @@ export function RaceScreen({
   };
 
   const handlePaste = (e) => {
-    // Prevent pasting to keep race fair
     e.preventDefault();
   };
-
-  const currentPlayer = players.find((p) => p.id === currentPlayerId);
 
   return (
     <div className="card race-card">
       <h2>Race</h2>
+      
       {countdown > 0 && (
-        <div className="countdown">Starting in {countdown}...</div>
+        <div className="countdown">{countdown}</div>
       )}
-      {countdown === 0 && !finished && (
-        <div className="countdown go">Go!</div>
-      )}
-
+      
       <div className="race-text">
         {chars.map((ch, idx) => {
           const typedChar = inputValue[idx];
@@ -110,24 +101,25 @@ export function RaceScreen({
         })}
       </div>
 
-      <textarea
+      <input
         className="typing-input"
+        type="text"
         value={inputValue}
         onChange={handleChange}
         onPaste={handlePaste}
         placeholder={
-          countdown > 0 ? "Get ready..." : "Start typing the text above..."
+          countdown > 0 ? "Get ready..." : "Start typing here..."
         }
         disabled={!started || finished}
+        autoFocus
       />
 
-      <h3>Live progress</h3>
-      <ul className="progress-list">
+      <div className="progress-list">
         {players.map((p) => (
-          <li key={p.id} className="progress-item">
+          <div key={p.id} className="progress-item">
             <div className="progress-label">
-              {p.name}
-              {p.id === currentPlayerId && " (You)"}
+              <span>{p.name} {p.id === currentPlayerId && "(You)"}</span>
+              <span>{p.wpm || 0} WPM • {p.accuracy != null ? p.accuracy : 100}%</span>
             </div>
             <div className="progress-bar">
               <div
@@ -135,21 +127,9 @@ export function RaceScreen({
                 style={{ width: `${Math.round((p.progress || 0) * 100)}%` }}
               />
             </div>
-            <div className="progress-stats">
-              <span>{p.wpm || 0} WPM</span>
-              <span>{p.accuracy != null ? p.accuracy : 100}% accuracy</span>
-            </div>
-          </li>
+          </div>
         ))}
-      </ul>
-
-      {currentPlayer && (
-        <div className="hint">
-          You are: <strong>{currentPlayer.name}</strong>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
-
-
