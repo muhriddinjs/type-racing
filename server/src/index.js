@@ -20,7 +20,7 @@ const TEXT_POOL = [
   "The quick brown fox jumps over the lazy dog.",
   "Real time typing races are fun and competitive.",
   "Practice makes perfect when learning to type fast.",
-  "Socket based applications enable low latency multiplayer games.",
+  "Socket based applications enable low latency multiplayer games."
 ];
 
 function getRandomText() {
@@ -33,8 +33,8 @@ const server = http.createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"],
-  },
+    methods: ["GET", "POST"]
+  }
 });
 
 app.use(cors());
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
       status: "lobby", // lobby | running | finished
       text: null,
       startTime: null, // timestamp in ms
-      leaderboard: [],
+      leaderboard: []
     };
     racesByPin.set(pin, race);
     socket.join(pin);
@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
       wpm: 0,
       accuracy: 100,
       finished: false,
-      finishTimeMs: null,
+      finishTimeMs: null
     };
 
     race.players[socket.id] = player;
@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
       pin,
       player,
       players: playersList,
-      hostId: race.hostId,
+      hostId: race.hostId
     };
     if (callback) callback({ ok: true, ...joinedPayload });
     socket.emit("joined_race", joinedPayload);
@@ -115,7 +115,7 @@ io.on("connection", (socket) => {
     socket.to(pin).emit("player_joined", {
       pin,
       player,
-      players: playersList,
+      players: playersList
     });
   });
 
@@ -157,16 +157,14 @@ io.on("connection", (socket) => {
     if (!player) return;
 
     // Update player stats
-    if (typeof progress === "number") {
-      player.progress = Math.max(player.progress, progress);
-    }
+    player.progress = typeof progress === "number" ? progress : player.progress;
     if (typeof wpm === "number") player.wpm = wpm;
     if (typeof accuracy === "number") player.accuracy = accuracy;
 
     const playersList = Object.values(race.players);
     io.to(pin).emit("progress_broadcast", {
       pin,
-      players: playersList,
+      players: playersList
     });
   });
 
@@ -193,22 +191,21 @@ io.on("connection", (socket) => {
     if (typeof wpm === "number") player.wpm = wpm;
     if (typeof accuracy === "number") player.accuracy = accuracy;
 
-    // // Build leaderboard sorted by finish time (ascending)
+    // Build leaderboard sorted by finish time (ascending)
+    const finishedPlayers = Object.values(race.players).filter(
+      (p) => p.finished && typeof p.finishTimeMs === "number"
+    );
+    finishedPlayers.sort((a, b) => a.finishTimeMs - b.finishTimeMs);
+    race.leaderboard = finishedPlayers;
 
-    // const finishedPlayers = Object.values(race.players).filter(
-    //   (p) => p.finished && typeof p.finishTimeMs === "number"
-    // );
-    // finishedPlayers.sort((a, b) => a.finishTimeMs - b.finishTimeMs);
-    // race.leaderboard = finishedPlayers;
+    const leaderboardPayload = {
+      pin,
+      leaderboard: race.leaderboard
+    };
 
-    // const leaderboardPayload = {
-    //   pin,
-    //   leaderboard: race.leaderboard,
-    // };
+    io.to(pin).emit("leaderboard_update", leaderboardPayload);
 
-    // io.to(pin).emit("leaderboard_update", leaderboardPayload);
-
-    // if (callback) callback({ ok: true, ...leaderboardPayload });
+    if (callback) callback({ ok: true, ...leaderboardPayload });
 
     // If everyone finished, mark race as finished
     const allFinished =
@@ -216,25 +213,6 @@ io.on("connection", (socket) => {
       Object.values(race.players).every((p) => p.finished);
     if (allFinished) {
       race.status = "finished";
-
-      const allPlayers = Object.values(race.players);
-
-      // Finish time bo‘yicha sort
-      allPlayers.sort((a, b) => a.finishTimeMs - b.finishTimeMs);
-
-      // Rank beramiz
-      const leaderboard = allPlayers.map((p, index) => ({
-        ...p,
-        rank: index + 1,
-      }));
-
-      race.leaderboard = leaderboard;
-
-      const leaderboardPayload = {
-        pin,
-        leaderboard,
-      };
-
       io.to(pin).emit("race_finished", leaderboardPayload);
     }
   });
@@ -253,7 +231,7 @@ io.on("connection", (socket) => {
         io.to(pin).emit("player_left", {
           pin,
           playerId: socket.id,
-          players: playersList,
+          players: playersList
         });
 
         // If host left, end the race and remove it
@@ -273,3 +251,5 @@ const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+
