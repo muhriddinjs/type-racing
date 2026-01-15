@@ -17,9 +17,17 @@ function generatePin() {
 
 // Very simple text pool for races
 const TEXT_POOL = [
-  "The quick brown fox jumps over the lazy dog.",
-  "Real time typing races are fun and competitive.",
-  "Practice makes perfect when learning to type fast.",
+  "The quick brown fox jumps over the lazy dog. we look govern time general show such interest should give between down hand most possible should too real out this into another own late  ",
+  "Real time typing races are fun and competitive. On a voyage to a distant galaxy, an astronaut was gazing at a quartz crystal.
+It was passed down in his family for generations as a sign of protection.
+This was a vast and complex system, full of uncharted space and mystic entities.
+The astronaut had a wax seal and some quills in his spacecraft's desk.
+Frequently, he would squint through a telescope and analyze the celestial array.
+The great Milky Way sprawling across his view.",
+  "Practice makes perfect when learning to type fast. Frequently, he would squint through a telescope and analyze the celestial array.
+The great Milky Way sprawling across his view.
+He was tasked with an essential query - the existence of extraterrestrial life.
+On a quiet day, he saw a galaxy flicker and sway in a fascinating rhythm.",
   "Socket based applications enable low latency multiplayer games."
 ];
 
