@@ -33,10 +33,10 @@ async function generatePin() {
 
 // Very simple text pool for races
 const TEXT_POOL = [
-  "The quick brown fox jumps over the lazy dog.",
-  "Real time typing races are fun and competitive.",
-  "Practice makes perfect when learning to type fast.",
-  "Socket based applications enable low latency multiplayer games.",
+  "The quick brown fox jumps over the lazy dog. Socket based applications enable low latency multiplayer games.",
+  "Real time typing races are fun and competitive. Practice makes perfect when learning to type fast.",
+  "Practice makes perfect when learning to type fast. The quick brown fox jumps over the lazy dog.",
+  "Socket based applications enable low latency multiplayer games. Real time typing races are fun and competitive.",
 ];
 
 function getRandomText() {
