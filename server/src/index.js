@@ -2,7 +2,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { Server as SocketIOServer } from "socket.io";
-import { redis } from "./redis";
+import { redis } from "./redis.js";
 
 // RAMda saqlangan ma'lumotlarni Redis bilan saqlayapmiz
 const raceKey = (pin) => `race:${pin}`;
